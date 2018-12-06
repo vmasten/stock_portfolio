@@ -52,3 +52,6 @@ def search():
 
     return render_template('search.html', form=form), 200
 
+@app.route('/portfolio')
+def portfolio():
+    return render_template('stock_detail.html'), 200
