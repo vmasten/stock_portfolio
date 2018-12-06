@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Search for stocks</h1>
+<form action="/search" method="POST">
+{{form.csrf_token}}
+{{form.stock_name.label}} {{form.stock_name(size=20)}}
+<input type="submit" value="Go">
+</form>
+{% endblock %}
