@@ -2,7 +2,7 @@
 Flask
 
 **Author**: Vince Masten
-**Version**: 1.0.0
+**Version**: 1.0.2
 
 ## Overview
 A simple HTTP server built with Flask that has a homepage and a search page for finding company information by stock symbol.
@@ -17,6 +17,22 @@ A simple HTTP server built with Flask that has a homepage and a search page for 
 Uses Python, pipenv (with a variety of packages--see Pipfile for more information) and Flask as a framework for loading and rendering the page.
 
 ## Change Log
+
+Author: Vince Masten <vmasten@me.com>
+Date:   Thu Dec 6 16:09:10 2018 -0800
+
+    refactor complete
+
+Author: Vince Masten <vmasten@me.com>
+Date:   Thu Dec 6 12:59:12 2018 -0800
+
+    added requirements.txt for deployment
+
+Author: Vince Masten <vmasten@me.com>
+Date:   Thu Dec 6 10:17:34 2018 -0800
+
+    refactor started by following along with code review
+
 Author: Vince Masten <vmasten@me.com>
 Date:   Wed Dec 5 23:19:44 2018 -0800
 
