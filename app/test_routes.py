@@ -50,3 +50,13 @@ def test_search_route_get():
 def test_search_post_pre_redirect(client):
     rv = client.post('/search', data = {'symbol' : 'aapl'})
     assert rv.status_code == 200
+
+
+def test_search_post(client):
+    rv = client.post('/search', data = {'symbol' : 'aapl'})
+    assert rv.status_code == 200
+    assert b'<h2>Company Info</h2>' in rv.data
+
+def test_bunk_symbol(client):
+    rv = client.post('search', data={'symbol' : ''})
+    assert rv.status_code == 404
