@@ -15,5 +15,4 @@ def session():
 
 def test_company_all(session):
     companies = Company.query.all()
-    assert len(companies) == 2
-    # There have been a couple of insertions
+    assert len(companies) == 0
