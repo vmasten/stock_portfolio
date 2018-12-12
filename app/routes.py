@@ -45,7 +45,7 @@ def search():
                 return redirect(url_for('.portfolio')), 201
                 # there's probably a more graceful way
 
-            return redirect(url_for('.portfolio')), 201
+            return redirect(url_for('.portfolio')), 302
 
         except JSONDecodeError:
             abort(404)

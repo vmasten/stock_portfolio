@@ -17,6 +17,8 @@ flask-migrate = "*"
 psycopg2-binary = "*"
 flask-wtf = "*"
 python-dotenv = "*"
+pytest = "*"
+coverage = "*"
 
 [requires]
 python_version = "3.6"
