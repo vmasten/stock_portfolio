@@ -7,4 +7,8 @@ from wtforms.validators import DataRequired
 class StockSearchForm(FlaskForm):
     """A simple class that helps build a form to get a stock name."""
 
-    stock_name = StringField('symbol', validators=[DataRequired()])
+    symbol = StringField('symbol', validators=[DataRequired()])
+
+class StockAddForm(FlaskForm):
+    symbol = StringField('symbol', validators=[DataRequired()])
+    company = StringField('company', validators=[DataRequired()])
