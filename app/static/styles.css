@@ -14,7 +14,7 @@ p {
     margin: 0
 }
 
-.main_nav a {
+a {
     text-decoration: none;
     color: blue;
 }

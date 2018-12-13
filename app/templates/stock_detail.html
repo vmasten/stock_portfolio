@@ -1,10 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Stock Portfolio</h2>
-{% for company in db %}
-<div class="company">
-<p> Name: {{company.company}}
-<p> Website: {{company.website}}
-{% endfor %}
-{% endblock %}
+<div class="container">
+  <h2>Stock Portfolio</h2>
+  <div>
+    <h3>Make a Portfolio</h3>
+    <form action="{{url_for(".portfolio")}}" method="POST">
+      {{form.hidden_tag()}}
+      {{form.name.label}}{{form.name(size=20)}}
+      <input type="submit" name="create_portfolio" id="create_portfolio" value="Add">
+    </form>
+  </div>
+  <div>
+    {% for company in db %}
+      <div class="company">
+        <p> Name: {{company.company}}
+        <p> Website: {{company.website}}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}

@@ -1,12 +1,17 @@
 """Define the routes used by the stock portfolio app."""
 from . import app
-from flask import Flask, render_template, abort, redirect, url_for, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session
 from sqlalchemy.exc import IntegrityError, DBAPIError
-from .models import Company, db
-from json import JSONDecodeError
+from .models import Company, db, Portfolio
 import requests as req
 import json
-from .forms import StockSearchForm, StockAddForm
+from .forms import StockSearchForm, StockAddForm, PortfolioCreateForm
+
+
+@app.add_template_global
+def get_portfolios():
+    """Check whether portfolio database entries currently exist."""
+    return Portfolio.query.all()
 
 
 @app.route('/')
@@ -75,8 +80,22 @@ def company():
     )
 
 
-@app.route('/portfolio')
+@app.route('/portfolio', methods=['GET', 'POST'])
 def portfolio():
     """Render the portfolio page."""
-    db = Company.query.all()
-    return render_template('stock_detail.html', db=db)
+
+    form = PortfolioCreateForm()
+
+    if form.validate_on_submit():
+        try:
+            portfolio = Portfolio(name=form.data['name'])
+            db.session.add(portfolio)
+            db.session.commit()
+        except (DBAPIError, IntegrityError):
+            flash('Something went wrong on the form.')
+            return render_template('stock_detail.html', form=form)
+
+        return redirect(url_for('.search'))
+
+    database = Company.query.all()
+    return render_template('stock_detail.html', db=database, form=form)
