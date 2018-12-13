@@ -9,6 +9,14 @@ class StockSearchForm(FlaskForm):
 
     symbol = StringField('symbol', validators=[DataRequired()])
 
+
 class StockAddForm(FlaskForm):
     symbol = StringField('symbol', validators=[DataRequired()])
     company = StringField('company', validators=[DataRequired()])
+    exchange = StringField('exchange', validators=[DataRequired()])
+    industry = StringField('industry', validators=[DataRequired()])
+    website = StringField('website', validators=[DataRequired()])
+    description = StringField('description', validators=[DataRequired()])
+    CEO = StringField('CEO', validators=[DataRequired()])
+    issueType = StringField('issueType', validators=[DataRequired()])
+    sector = StringField('sector', validators=[DataRequired()])

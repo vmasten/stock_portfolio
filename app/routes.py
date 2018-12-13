@@ -28,33 +28,6 @@ def search():
 
         return redirect(url_for('.company'))
 
-        # try:
-        #     data = json.loads(res.text)
-        #     company = {
-        #         'symbol': data['symbol'],
-        #         'companyName': data['companyName'],
-        #         'exchange': data['exchange'],
-        #         'industry': data['industry'],
-        #         'website': data['website'],
-        #         'description': data['description'],
-        #         'CEO': data['CEO'],
-        #         'issueType': data['issueType'],
-        #         'sector': data['sector'],
-        #     }
-
-        #     new_company = Company(**company)
-        #     try:
-        #         db.session.add(new_company)
-        #         db.session.commit()
-        #     except IntegrityError:
-        #         return redirect(url_for('.portfolio')), 201
-        #         # there's probably a more graceful way
-
-        #     return redirect(url_for('.portfolio')), 302
-
-        # except JSONDecodeError:
-        #     abort(404)
-
     return render_template('search.html', form=form), 200
 
 
@@ -62,7 +35,7 @@ def search():
 def company():
     form_context = {
         'symbol': session['context']['symbol'],
-        'companyName': session['context']['companyName'],
+        'company': session['context']['companyName'],
         'exchange': session['context']['exchange'],
         'industry': session['context']['industry'],
         'website': session['context']['website'],
@@ -73,10 +46,19 @@ def company():
     }
 
     form = StockAddForm(**form_context)
-
     if form.validate_on_submit():
         try:
-            company = Company(symbol=form.data['symbol'], companyName=form.data['companyName'])
+            company = Company(
+                symbol=form.data['symbol'],
+                company=form.data['company'],
+                exchange=form.data['exchange'],
+                industry=form.data['industry'],
+                website=form.data['website'],
+                description=form.data['description'],
+                CEO=form.data['CEO'],
+                issueType=form.data['issueType'],
+                sector=form.data['sector'],
+            )
             db.session.add(company)
             db.session.commit()
         except (DBAPIError, IntegrityError):
@@ -88,13 +70,13 @@ def company():
     return render_template(
         'company.html',
         form=form,
-        company=form_context['companyName'],
-        symbol=form_context['symbol'],
-
+        company=form.data['company'],
+        symbol=form.data['symbol'],
     )
 
 
 @app.route('/portfolio')
 def portfolio():
     """Render the portfolio page."""
-    return render_template('stock_detail.html', db=db), 200
+    db = Company.query.all()
+    return render_template('stock_detail.html', db=db)

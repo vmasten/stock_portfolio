@@ -1,0 +1,32 @@
+body {
+    padding: 20px
+}
+
+header {
+    border-bottom: 0.05vh solid black;
+}
+
+ul {
+    margin: 0
+}
+
+p {
+    margin: 0
+}
+
+.main_nav a {
+    text-decoration: none;
+    color: blue;
+}
+
+.main_nav li {
+    display: inline-block;
+}
+
+.main_nav li:after {
+    content: ' |';
+}
+
+.company_labels {
+    font-weight: bold;
+}
