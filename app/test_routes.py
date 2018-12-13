@@ -2,17 +2,8 @@
 from . import app
 from .models import db
 import pytest
+import os
 
-
-
-@pytest.fixture
-def client():
-    def do_nothing():
-        pass
-
-    db.session.commit = do_nothing
-    yield app.test_client()
-    db.session.rollback()
 
 def test_home_route_get():
     """Test for the home route."""
@@ -51,6 +42,7 @@ def test_search_post_pre_redirect(client):
     rv = client.post('/search', data={'symbol': 'aapl'})
     assert rv.status_code == 200
 
+
 def test_search_post(client):
     rv = client.post('/search', data={'symbol': 'amzn'}, follow_redirects=True)
     assert rv.status_code == 200
@@ -58,7 +50,7 @@ def test_search_post(client):
 
 
 def test_no_symbol(client):
-    rv = client.post('search', data={'symbol': ''})
+    rv = client.post('/search', data={'symbol': ''}, follow_redirects=True)
     assert rv.status_code == 200
 
 
