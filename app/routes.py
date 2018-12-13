@@ -20,6 +20,8 @@ def search():
     """Go to the search page, which has a form for an API call."""
     form = StockSearchForm()
 
+    # import pdb; pdb.set_trace()
+
     if form.validate_on_submit():
         res = req.get(f'https://api.iextrading.com/1.0/stock/{ form.data["stock_name"] }/company')
 
