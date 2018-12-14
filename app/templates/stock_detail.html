@@ -1,6 +1,31 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Company Info</h2>
-<p>This page is a work in progress.</p>
-{% endblock %}
+<div class="container">
+  <h2>Stock Portfolio</h2>
+  <div>
+    <h3>Make a Portfolio</h3>
+    <form action="{{url_for(".portfolio")}}" method="POST">
+      {{form.hidden_tag()}}
+      {{form.name.label}}{{form.name(size=20)}}
+      <input type="submit" name="create_portfolio" id="create_portfolio" value="Add">
+    </form>
+  </div>
+  <div>
+    {% for portfolio in portfolios %}
+    {% if portfolio.companies %}
+    <!--don't render if the portfolio is empty -->
+    <div class="card">
+      <p class="portfolio_title">Portfolio: {{portfolio.name|title}}
+      {% for company in companies %}
+      {% if company.portfolio == portfolio %}
+          <p> Name: {{company.company}}
+          <p> Website: {{company.website}}
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endblock content %}
