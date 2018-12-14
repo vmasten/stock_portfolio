@@ -40,6 +40,7 @@ class Portfolio(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True, unique=True)
+    user_id = db.Column(db.ForeignKey('users.id'), nullable=False)
 
     companies = db.relationship('Company', backref='portfolio', lazy=True)
 
@@ -67,9 +68,11 @@ class User(db.Model):
     def __repr__(self):
         return '<User {}>'.format(self.email)
 
-    def __init__(self, email, password):
+    def __init__(self, email, password, first_name, last_name):
         self.email = email
         self.password = sha256_crypt.encrypt(password)
+        self.first_name = first_name
+        self.last_name = last_name
 
     @classmethod
     def check_credentials(cls, user, password):

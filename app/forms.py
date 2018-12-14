@@ -36,6 +36,12 @@ class PortfolioCreateForm(FlaskForm):
 
 
 class AuthForm(FlaskForm):
+    """Form to log in."""
+    email = StringField('email', validators=[DataRequired()])
+    password = PasswordField('password', validators=[DataRequired()])
+    
+
+class RegisterForm(FlaskForm):
     """Form to create an account."""
     email = StringField('email', validators=[DataRequired()])
     password = PasswordField('password', validators=[DataRequired()])

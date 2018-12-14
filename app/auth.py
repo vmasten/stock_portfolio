@@ -1,7 +1,7 @@
 """Module to allow logins on the site."""
 from flask import render_template, flash, redirect, url_for, session, abort, g
 from .models import db, User
-from .forms import AuthForm
+from .forms import AuthForm, RegisterForm
 from . import app
 import functools
 
@@ -32,7 +32,7 @@ def load_logged_in_user():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     """Allow the user to register a new login."""
-    form = AuthForm()
+    form = RegisterForm()
 
     if form.validate_on_submit():
         email = form.data['email']
@@ -47,7 +47,12 @@ def register():
             error = f'{email} has already been registered.'
 
         if error is None:
-            user = User(email=email, password=password, first_name=first_name, last_name=last_name)
+            user = User(
+                email=email,
+                password=password,
+                first_name=first_name,
+                last_name=last_name)
+
             db.session.add(user)
             db.session.commit()
 
@@ -63,7 +68,6 @@ def register():
 def login():
     """Authenticate user."""
     form = AuthForm()
-
     if form.validate_on_submit():
         email = form.data['email']
         password = form.data['password']
@@ -71,7 +75,7 @@ def login():
 
         user = User.query.filter_by(email=email).first()
 
-        if user is None or not User.check_password_hash(user, password):
+        if user is None or not User.check_credentials(user, password):
             error = 'Invalid username or password.'
 
         if error is None:
