@@ -19,6 +19,7 @@ flask-wtf = "*"
 python-dotenv = "*"
 coverage = "*"
 pytest = "*"
+passlib = "*"
 
 [requires]
 python_version = "3.6"

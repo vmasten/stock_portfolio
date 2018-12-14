@@ -6,6 +6,7 @@ from .models import Company, db, Portfolio
 import requests as req
 import json
 from .forms import StockSearchForm, StockAddForm, PortfolioCreateForm
+from .auth import login_required
 
 
 @app.add_template_global
@@ -21,6 +22,7 @@ def home():
 
 
 @app.route('/search', methods=['GET', 'POST'])
+@login_required
 def search():
     """Go to the search page, which has a form for an API call."""
     form = StockSearchForm()
@@ -37,6 +39,7 @@ def search():
 
 
 @app.route('/company', methods=['GET', 'POST'])
+@login_required
 def company():
     form_context = {
         'symbol': session['context']['symbol'],
@@ -82,6 +85,7 @@ def company():
 
 
 @app.route('/portfolio', methods=['GET', 'POST'])
+@login_required
 def portfolio():
     """Render the portfolio page."""
 

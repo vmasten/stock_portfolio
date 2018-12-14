@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime as dt
 from flask_migrate import Migrate
 from . import app
+from passlib.hash import sha256_crypt
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -46,3 +47,34 @@ class Portfolio(db.Model):
 
     def __repr__(self):
         return '<Portfolio {}>'.format(self.name)
+
+
+class User(db.Model):
+    """Create a user for authentication."""
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(256), index=True, nullable=False, unique=True)
+    password = db.Column(db.String(256), nullable=False)
+    first_name = db.Column(db.String(128))
+    last_name = db.Column(db.String(128))
+
+    portfolios = db.relationship('Portfolio', backref='user', lazy=True)
+
+    date_created = db.Column(db.DateTime, default=dt.now())
+    date_updated = db.Column(db.DateTime, default=dt.now())
+
+    def __repr__(self):
+        return '<User {}>'.format(self.email)
+
+    def __init__(self, email, password):
+        self.email = email
+        self.password = sha256_crypt.encrypt(password)
+
+    @classmethod
+    def check_credentials(cls, user, password):
+        if user is not None:
+            if sha256_crypt.verify(password, user.password):
+                return True
+
+        return False
