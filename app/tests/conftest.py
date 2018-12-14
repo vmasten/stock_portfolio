@@ -2,9 +2,10 @@ from ..models import db as _db
 from .. import app as _app
 import pytest
 import os
+from ..models import Company, Portfolio
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture()
 def app(request):
     _app.config.from_mapping(
         TESTING=True,
@@ -23,7 +24,7 @@ def app(request):
     return _app
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture()
 def db(app, request):
 
     def teardown():
@@ -36,7 +37,7 @@ def db(app, request):
     return _db
 
 
-@pytest.fixture(scope='class')
+@pytest.fixture()
 def session(db, request):
     connection = db.engine.connect()
     transaction = connection.begin()
@@ -53,3 +54,25 @@ def session(db, request):
 
     request.addfinalizer(teardown)
     return session
+
+
+@pytest.fixture()
+def company(session):
+    company = Company(
+        symbol='goog',
+        company='Alphabet, Inc.',
+        portfolio_id=1,
+        )
+
+    session.add(company)
+    session.commit()
+    return company
+
+
+@pytest.fixture()
+def portfolio(session):
+    portfolio = Portfolio(name='name')
+
+    session.add(portfolio)
+    session.commit()
+    return portfolio

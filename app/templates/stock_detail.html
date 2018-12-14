@@ -12,11 +12,19 @@
     </form>
   </div>
   <div>
-    {% for company in db %}
-      <div class="company">
-        <p> Name: {{company.company}}
-        <p> Website: {{company.website}}
-      </div>
+    {% for portfolio in portfolios %}
+    {% if portfolio.companies %}
+    <!--don't render if the portfolio is empty -->
+    <div class="card">
+      <p class="portfolio_title">Portfolio: {{portfolio.name|title}}
+      {% for company in companies %}
+      {% if company.portfolio == portfolio %}
+          <p> Name: {{company.company}}
+          <p> Website: {{company.website}}
+      {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
     {% endfor %}
   </div>
 </div>

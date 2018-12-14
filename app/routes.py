@@ -63,6 +63,7 @@ def company():
                 CEO=form.data['CEO'],
                 issueType=form.data['issueType'],
                 sector=form.data['sector'],
+                portfolio_id=form.data['portfolios']
             )
             db.session.add(company)
             db.session.commit()
@@ -97,5 +98,6 @@ def portfolio():
 
         return redirect(url_for('.search'))
 
-    database = Company.query.all()
-    return render_template('stock_detail.html', db=database, form=form)
+    companies = Company.query.all()
+    portfolios = Portfolio.query.all()
+    return render_template('stock_detail.html', companies=companies, portfolios=portfolios, form=form)

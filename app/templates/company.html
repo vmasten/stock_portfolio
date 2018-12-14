@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="preview">
 <p>Company: {{company}}</p>
 <p>Symbol: {{symbol}}
+</div>
 
 <form action="{{url_for(".company")}}" method="POST">
   {{form.csrf_token}}
@@ -11,6 +13,13 @@
     {{form.symbol.label}}{{form.symbol(size=20)}}
     {{form.company.label}}{{form.company(size=20)}}
   </div>
+  <div class="dropdown-title">
+  {{form.portfolios.label|striptags|title}}:
+  </div>
+  <div class="dropdown">
+  {{form.portfolios()}}
   <input type="submit" value="Add">
+  </div>
 </form>
+
 {% endblock %}

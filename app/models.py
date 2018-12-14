@@ -29,7 +29,7 @@ class Company(db.Model):
 
     def __repr__(self):
         """Return dev-friendly definition."""
-        return '<Company {}>'.format(self.companyName)
+        return '<Company {}>'.format(self.company)
 
 
 class Portfolio(db.Model):
