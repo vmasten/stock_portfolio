@@ -1,6 +1,6 @@
 """Define the routes used by the stock portfolio app."""
 from . import app
-from flask import Flask, render_template, redirect, url_for, flash, session
+from flask import render_template, redirect, url_for, flash, session, g
 from sqlalchemy.exc import IntegrityError, DBAPIError
 from .models import Company, db, Portfolio
 import requests as req
@@ -41,6 +41,7 @@ def search():
 @app.route('/company', methods=['GET', 'POST'])
 @login_required
 def company():
+    """Add a company to the database and redirect to the portfolio page."""
     form_context = {
         'symbol': session['context']['symbol'],
         'company': session['context']['companyName'],
@@ -88,12 +89,13 @@ def company():
 @login_required
 def portfolio():
     """Render the portfolio page."""
-
     form = PortfolioCreateForm()
 
     if form.validate_on_submit():
         try:
-            portfolio = Portfolio(name=form.data['name'])
+            portfolio = Portfolio(
+                name=form.data['name'],
+                user_id=g.user.id)
             db.session.add(portfolio)
             db.session.commit()
         except (DBAPIError, IntegrityError):

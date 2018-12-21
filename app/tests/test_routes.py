@@ -1,19 +1,24 @@
 """Tests for routing in the stock_portfolio app."""
-import pytest
-from sqlalchemy.exc import IntegrityError
+from ..models import Portfolio
 
 
-def test_home_route_get(app):
+def test_authenticated_client(authenticated_client):
+    """Test authenticated client fixture."""
+    assert authenticated_client
+
+
+def test_portfolio_fixture(portfolio, user):
+    """Test portfolio fixture."""
+    assert Portfolio.query.first().id == portfolio.id
+    assert portfolio.user_id == user.id
+    assert not Portfolio.query.first().companies
+
+
+def test_home_route_get(client):
     """Test for the home route."""
-    rv = app.test_client().get('/')
-    assert rv.status_code == 200
-    assert b'<h1>Stock Portfolio Builder</h1>' in rv.data
-
-
-def test_home_route_post(app):
-    """Test a post on home route."""
-    rv = app.test_client().post('/')
-    assert rv.status_code == 405
+    res = client.get('/')
+    assert res.status_code == 200
+    assert b'<h1>Stock Portfolio Builder</h1>' in res.data
 
 
 def test_home_route_delete(app):
@@ -22,43 +27,84 @@ def test_home_route_delete(app):
     assert rv.status_code == 405
 
 
-def test_portfolio_route_get(app, session):
-    """Test the portfolio route."""
-    rv = app.test_client().get('/portfolio')
-    assert rv.status_code == 200
-    assert b'<h2>Stock Portfolio</h2>' in rv.data
+def test_registration_route(client):
+    """Test registration route for unauthenticated user."""
+    res = client.get('register')
+    assert res.status_code == 200
 
 
+def test_registration_redirect(client):
+    """Test registering new user."""
+    res = client.post(
+        '/register',
+        data={
+            'email': 'user@user.com',
+            'password': 'pass',
+            'first_name': 'jerk',
+            'last_name': 'mode'},
+        follow_redirects=True,
+    )
+    assert b'Login' in res.data
 
-def test_search_route_get(app, session):
-    """Test the search route."""
-    rv = app.test_client().get('/search')
-    assert rv.status_code == 200
-    assert b'<a href="/portfolio">here</a>' in rv.data
+
+def test_login(client):
+    """Test login functionality."""
+    client.post(
+        '/register',
+        data={
+            'email': 'user@user.com',
+            'password': 'pass',
+            'first_name': 'jerk',
+            'last_name': 'mode'},
+        follow_redirects=True,
+    )
+    res = client.post(
+        '/login',
+        data={
+            'email': 'user@user.com',
+            'password': 'pass'},
+        follow_redirects=True
+    )
+    assert res.status_code == 200
 
 
-def test_search_post_pre_redirect(app, session):
-    rv = app.test_client().post('/search', data={'symbol': 'aapl'})
+def test_authenticated_user(authenticated_client):
+    """See if an authenticated user can access gated content."""
+    res = authenticated_client.get('/search')
+    assert res.status_code == 200
+
+
+def test_company_to_portfolio_creation(authenticated_client, portfolio):
+    """Test adding a company to a portfolio with created status code."""
+    authenticated_client.post('/search', data={'symbol': 'tsla'}, follow_redirects=True)
+    form_data = {'symbol': 'tsla', 'company': 'Tesla', 'portfolios': portfolio.id}
+    rv = authenticated_client.post(
+        '/company',
+        data=form_data,
+        follow_redirects=False)
+    assert len(Portfolio.query.first().companies) == 1
     assert rv.status_code == 302
 
 
-def test_search_post(app, session):
-    rv = app.test_client().post('/search', data={'symbol': 'amzn'}, follow_redirects=True)
+def test_company_to_portfolio_redirect(authenticated_client, portfolio):
+    """Test adding a company to the portfolio with redirect."""
+    authenticated_client.post('/search', data={'symbol': 'tsla'}, follow_redirects=True)
+    form_data = {'symbol': 'tsla', 'company': 'Tesla', 'portfolios': portfolio.id}
+    rv = authenticated_client.post(
+        '/company',
+        data=form_data,
+        follow_redirects=True)
     assert rv.status_code == 200
-    assert b'<input type="submit" value="Add">' in rv.data
+    assert b'<h3>Make a Portfolio</h3>' in rv.data
 
 
-def test_no_symbol(app, session):
-    rv = app.test_client().post('search', data={'symbol': ''})
-    assert rv.status_code == 200
+def test_logout(authenticated_client):
+    """Test logout functionality."""
+    res = authenticated_client.get('/logout', follow_redirects=True)
+    assert res.status_code == 200
 
 
-def test_404_exception(app):
-    rv = app.test_client().get('/blackhole')
+def test_not_logged_in_user(client):
+    """Test authentication gating."""
+    rv = client.get('/portfolio')
     assert rv.status_code == 404
-
-
-# def test_company_route(app, session, db, portfolio, company):
-#     rv = app.test_client().get('/company')
-#     assert rv.status_code == 200
-#     assert b'Company' in rv.data

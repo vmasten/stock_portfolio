@@ -47,11 +47,13 @@ class Portfolio(db.Model):
     date_created = db.Column(db.DateTime, default=dt.now())
 
     def __repr__(self):
+        """Provide debug-friendly info about the Portfolio object."""
         return '<Portfolio {}>'.format(self.name)
 
 
 class User(db.Model):
     """Create a user for authentication."""
+
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
@@ -66,11 +68,12 @@ class User(db.Model):
     date_updated = db.Column(db.DateTime, default=dt.now())
 
     def __repr__(self):
+        """Provide debug-friendly info about the User object."""
         return '<User {}>'.format(self.email)
 
     def __init__(self, email, password, first_name, last_name):
         self.email = email
-        self.password = sha256_crypt.encrypt(password)
+        self.password = sha256_crypt.hash(password)
         self.first_name = first_name
         self.last_name = last_name
 
