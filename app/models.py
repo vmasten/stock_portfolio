@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime as dt
 from flask_migrate import Migrate
 from . import app
+from passlib.hash import sha256_crypt
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -39,10 +40,47 @@ class Portfolio(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(128), index=True, unique=True)
+    user_id = db.Column(db.ForeignKey('users.id'), nullable=False)
 
     companies = db.relationship('Company', backref='portfolio', lazy=True)
 
     date_created = db.Column(db.DateTime, default=dt.now())
 
     def __repr__(self):
+        """Provide debug-friendly info about the Portfolio object."""
         return '<Portfolio {}>'.format(self.name)
+
+
+class User(db.Model):
+    """Create a user for authentication."""
+
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(256), index=True, nullable=False, unique=True)
+    password = db.Column(db.String(256), nullable=False)
+    first_name = db.Column(db.String(128))
+    last_name = db.Column(db.String(128))
+
+    portfolios = db.relationship('Portfolio', backref='user', lazy=True)
+
+    date_created = db.Column(db.DateTime, default=dt.now())
+    date_updated = db.Column(db.DateTime, default=dt.now())
+
+    def __repr__(self):
+        """Provide debug-friendly info about the User object."""
+        return '<User {}>'.format(self.email)
+
+    def __init__(self, email, password, first_name, last_name):
+        self.email = email
+        self.password = sha256_crypt.hash(password)
+        self.first_name = first_name
+        self.last_name = last_name
+
+    @classmethod
+    def check_credentials(cls, user, password):
+        if user is not None:
+            if sha256_crypt.verify(password, user.password):
+                return True
+
+        return False
