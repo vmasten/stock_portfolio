@@ -9,17 +9,35 @@
   <link rel="stylesheet" href="{{url_for("static", filename="styles.css")}}">
   <title>Stock Portfolio</title>
 </head>
+
 <body>
+
   <header>
     <nav class="main_nav">
       <ul>
         <li><a href="{{url_for(".home")}}">Home</a></li>
+        {% if g.user %}
         <li><a href="{{url_for(".search")}}">Search</a></li>
         <li><a href="{{url_for(".portfolio")}}">Portfolio</a></li>
+        <li><a href="{{url_for(".logout")}}">Logout</a></li>
+        {% else %}
+        <li><a href="{{url_for(".register")}}">Register</a></li>
+        <li><a href="{{url_for(".login")}}">Login</a></li>
+        {% endif %}
       </ul>
     </nav>
+
+    {% if g.user %}
+    <h3>Welcome, {{g.user['first_name']}}!</h3>
+    {% endif %}
+
+
   </header>
   <main>
+    {% for message in get_flashed_messages() %}
+      <div>{{message}}</div>
+    {% endfor %}
+
     {% block content %}
     <h3>No Content</h3>
     {% endblock content%}

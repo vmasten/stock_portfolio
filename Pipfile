@@ -19,6 +19,12 @@ flask-wtf = "*"
 python-dotenv = "*"
 coverage = "*"
 pytest = "*"
+passlib = "*"
+pandas = "*"
+numpy = "*"
+bokeh = ">=1.0.4"
+jupyter = "*"
+stockstats = "*"
 
 [requires]
 python_version = "3.6"
