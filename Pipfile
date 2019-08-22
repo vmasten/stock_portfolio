@@ -22,7 +22,7 @@ pytest = "*"
 passlib = "*"
 pandas = "*"
 numpy = "*"
-bokeh = "*"
+bokeh = ">=1.0.4"
 jupyter = "*"
 stockstats = "*"
 
